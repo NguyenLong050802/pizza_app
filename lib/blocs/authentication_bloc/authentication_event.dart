@@ -8,7 +8,7 @@ sealed class AuthenticationEvent extends Equatable {
 }
 
 class AuthenticationUserChanged extends AuthenticationEvent {
-  const AuthenticationUserChanged(this.user);
-
   final MyUser? user;
+
+  const AuthenticationUserChanged(this.user);
 }

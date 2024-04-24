@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../../../components/my_text_field.dart';
 import '../blocs/sign_up_bloc/sign_up_bloc.dart';
 
@@ -20,11 +20,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   IconData iconPassword = CupertinoIcons.eye_fill;
   bool obscurePassword = true;
   bool signUpRequired = false;
+
   bool containsUpperCase = false;
   bool containsLowerCase = false;
   bool containsNumber = false;
   bool containsSpecialChar = false;
   bool contains8Length = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
@@ -46,10 +48,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Center(
           child: Column(
             children: [
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.08,
                 child: MyTextField(
                     controller: emailController,
                     hintText: 'Email',
@@ -59,16 +60,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     validator: (val) {
                       if (val!.isEmpty) {
                         return 'Please fill in this field';
-                      } else if (!isEmailValid(val)) {
+                      } else if (!RegExp(r'^[\w-\.]+@([\w-]+.)+[\w-]{2,4}$')
+                          .hasMatch(val)) {
                         return 'Please enter a valid email';
                       }
                       return null;
                     }),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.08,
+                width: MediaQuery.of(context).size.width * 0.9,
                 child: MyTextField(
                     controller: passwordController,
                     hintText: 'Password',
@@ -83,6 +85,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       } else {
                         setState(() {
                           containsUpperCase = false;
+                        });
+                      }
+                      if (val.contains(RegExp(r'[a-z]'))) {
+                        setState(() {
+                          containsLowerCase = true;
+                        });
+                      } else {
+                        setState(() {
+                          containsLowerCase = false;
                         });
                       }
                       if (val.contains(RegExp(r'[0-9]'))) {
@@ -131,13 +142,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     validator: (val) {
                       if (val!.isEmpty) {
                         return 'Please fill in this field';
-                      } else if (!isPasswordValid(val)) {
+                      } else if (!RegExp(
+                              r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~`)\%\-(_+=;:,.<>/?"[{\]}\|^]).{8,}$')
+                          .hasMatch(val)) {
                         return 'Please enter a valid password';
                       }
                       return null;
                     }),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,10 +195,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 6),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.08,
+                width: MediaQuery.of(context).size.width * 0.9,
                 child: MyTextField(
                     controller: nameController,
                     hintText: 'Name',
@@ -206,36 +219,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ? SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: TextButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            MyUser myUser = MyUser.empty;
-                            myUser.email = emailController.text;
-                            myUser.name = nameController.text;
-                            setState(() {
-                              context.read<SignUpBloc>().add(SignUpRequired(
-                                  myUser, passwordController.text));
-                            });
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                            elevation: 3.0,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(60))),
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Sign Up',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              MyUser myUser = MyUser.empty;
+                              myUser.email = emailController.text;
+                              myUser.name = nameController.text;
+
+                              setState(() {
+                                context.read<SignUpBloc>().add(SignUpRequired(
+                                    myUser, passwordController.text));
+                              });
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                              elevation: 3.0,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(60))),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 5),
+                            child: Text(
+                              'Sign Up',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          )),
                     )
                   : const CircularProgressIndicator()
             ],

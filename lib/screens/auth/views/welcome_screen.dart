@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/authentication_bloc/authentication_bloc.dart';
 import '../blocs/sign_up_bloc/sign_up_bloc.dart';
-import '../blocs/sign_in_bloc/sign_in_bloc.dart';
+import '../blocs/sing_in_bloc/sign_in_bloc.dart';
 import 'sign_in_screen.dart';
 import 'sign_up_screen.dart';
 
@@ -105,7 +105,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 															create: (context) => SignInBloc(
 																context.read<AuthenticationBloc>().userRepository
 															),
-															child: const SingInScreen(),
+															child: const SignInScreen(),
 														),
 														BlocProvider<SignUpBloc>(
 															create: (context) => SignUpBloc(
